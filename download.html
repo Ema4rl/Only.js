@@ -1,0 +1,103 @@
+<!doctype html>
+<html class="no-js" lang="en-us">
+<head>
+    <meta charset="UTF-8">
+    <title>Downloads | Only.js Selector-based Loader by Harrison Emmanuel (Ema4rl)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="assets/css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet.css">
+    <link rel="preload" as="style" href="assets/css/github.css">
+    <script src="assets/js/Only.min.js" data-only="assets/js/init.js" async></script>
+</head>
+<body>
+<section class="page-header">
+    <h1 class="project-name"><span class="only">Only</span><span class="js">.js</span> Selector-based Loader</h1>
+    <h2 class="project-tagline">Automatically load and execute selector-based dependencies</h2>
+    <ul class="page-nav">
+        <li><a href="index.html" class="btn">Home</a></li>
+        <li><a href="get-started.html" class="btn">Get Started</a></li>
+        <li><a href="documentation.html" class="btn">Documentation</a></li>
+        <li><a href="download.html" class="btn active">Download</a></li>
+        <li><a href="tests.html" class="btn">Test it!</a></li>
+    </ul>
+    <img class="page-header-img" src="assets/img/onlyjs-icon-md.png" width="200" height="200" alt="Only.js">
+</section>
+
+<section class="main-content">
+    <h1>Downloads and custom builds</h1>
+    <hr>
+
+    <h2>Latest download</h2>
+    <p>Current version: 2.0.1:</p>
+    <ul>
+        <li>
+            <a href="http://github.com/Ema4rl/Only.js/zipball/master">Only.js-master.zip</a>
+        </li>
+        <li>
+            <a href="http://github.com/Ema4rl/Only.js/tarball/master">Only.js-master.tar.gz</a>
+        </li>
+    </ul>
+
+    <hr>
+    <p>
+        <a class="btn btn-success" href="http://github.com/Ema4rl/Only.js" target="only_tab">Only.js Git Repository</a>
+    </p>
+
+    <h2 id="custom-builds">Custom builds</h2>
+    <hr>
+    <p>
+        It is recommended that you simply use the distribution-included minified files Only.min.js and Only-debug.min.js in production and development,
+        respectively. However, you may want to use your own minification tool to "build" Only.min.js, from the source file (Only.src.js). This is fine,
+        but make sure you don't use too aggressive of a minifier/compiler, as it's possible you could alter something about Only.js in an unexpected and
+        breaking way. Typically, compressors like UglifyJS <span class="text-muted">(without hoisting)</span>, YUIC, and Packer
+        <span class="text-muted">(without base62)</span> are quite safe and should be fine.
+    </p>
+    <h3>Automatic builds</h3>
+    <p>
+        Only.js officially uses <strong>gulp</strong> for custom builds. Visit <a href="GULP_WEBSITE">Gulp website</a> to learn more.
+    </p>
+    <p>
+        To install gulp and other dependencies, open your terminal and type:
+    </p>
+    <div class="highlight">
+        <pre><code class="css">npm install</code></pre>
+    </div>
+    <p>
+        To rebuild source with <strong>gulp-uglify</strong>, open your terminal and type:
+    </p>
+    <div class="highlight">
+        <pre><code class="css">gulp dist</code></pre>
+    </div>
+    <p>
+        To lint the source file with <strong>gulp-jshint</strong>, open your terminal and type:
+    </p>
+    <div class="highlight">
+        <pre><code class="css">gulp lint</code></pre>
+    </div>
+
+    <h3>Hand-made builds</h3>
+    <p>
+        Also Only.js source code (Only.src.js) has DEBUG-mode code in it, delimited by /!*START_DEBUG*/ and /*!END_DEBUG*/ comments. This debug code is
+        intended to be removed if minifying and building Only.min.js from the original source code (but left in if building Only-debug.min.js). This removal is
+        possible with a simple preprocessing regex replace to remove the DEBUG-mode code from the source before minification.
+        The following regular expression was used in automatic builds and should work for that purpose:
+    </p>
+    <div class="highlight"><pre class="text-center"><code class="css">/\/*!START_DEBUG(?:.|\n)+END_DEBUG*\//</code></pre></div>
+    <p>
+        The Only-debug.min.js file skipped this step before minification, thus it includes the debug code. The Only.min.js file however has the DEBUG-mode code
+        stripped from it.
+    </p>
+    <p><b>NOTE:</b> It should also be safe to simply pass Only.min.js or Only-debug.min.js to your own minifier (even though they are already minified), which will
+        simply do a harmless re-minification of the file. The best option, however, would be to instruct your build process to ignore minification on these files.
+    </p>
+
+    <footer class="site-footer">
+        <span class="site-footer-owner">Project maintained by <a href="https://github.com/Ema4rl">Harrison Emmanuel (Ema4rl)</a>.</span>
+
+        <span class="site-footer-credits">This page was built with: <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a>, <a href="https://ema4rl.github.io/CSS.load">CSS.load</a>, and <a href="https://ema4rl.github.io/Only.js">Only.js</a>.</span>
+    </footer>
+</section>
+</body>
+</html>

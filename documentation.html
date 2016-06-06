@@ -1,0 +1,482 @@
+<!doctype html>
+<html class="no-js" lang="en-us">
+<head>
+    <meta charset="UTF-8">
+    <title>Documentation | Only.js Selector-based Loader by Harrison Emmanuel (Ema4rl)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="assets/css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet.css">
+    <link rel="preload" as="style" href="assets/css/github.css">
+    <script src="assets/js/Only.min.js" data-only="assets/js/init.js" async></script>
+</head>
+<body>
+<section class="page-header">
+    <h1 class="project-name"><span class="only">Only</span><span class="js">.js</span> Selector-based Loader</h1>
+    <h2 class="project-tagline">Automatically load and execute selector-based dependencies</h2>
+    <ul class="page-nav">
+        <li><a href="index.html" class="btn">Home</a></li>
+        <li><a href="get-started.html" class="btn">Get Started</a></li>
+        <li><a href="documentation.html" class="btn active">Documentation</a></li>
+        <li><a href="download.html" class="btn">Download</a></li>
+        <li><a href="tests.html" class="btn">Test it!</a></li>
+    </ul>
+    <img class="page-header-img" src="assets/img/onlyjs-icon-md.png" width="200" height="200" alt="Only.js">
+</section>
+
+<section class="main-content">
+    <h1>Documentation</h1>
+        <hr>
+    <h2 id="documentation">Overview</h2>
+    <p>The old ways:</p>
+    <div class="highlight">
+        <pre><code>&lt;script src="framework.js"&gt;&lt;/script&gt;
+&lt;script src="plugin.framework.js"&gt;&lt;/script&gt;
+&lt;script src="myplugin.framework.js"&gt;&lt;/script&gt;
+&lt;script src="init.js"&gt;&lt;/script&gt;</code></pre>
+    </div>
+
+    <p>In the above example, all scripts <b>load</b> and <b>execute</b> serially (by default).</p>
+
+    <p>The new way (before <code>&lt;<b>/</b>head&gt;</code>):</p>
+
+    <div class="highlight">
+        <pre><code>&lt;script src="Only.min.js" data-only="init.js" asnyc&gt;&lt;/script&gt;</code></pre>
+    </div>
+
+    <p>In <code>init.js</code>:</p>
+    <div class="highlight">
+        <pre><code>$O.js("framework.js").wait()
+    .js(["plugin.framework.js", "myplugin.framework.js"])
+    .wait(function(){
+        // just inline the code to run framework plugins!
+    });</code></pre>
+    </div>
+
+    <p>
+        In the above example, all scripts <b>load</b> in parallel (by default). "framework.js" will execute first, but "plugin.framework.js"
+        and "myplugin.framework.js" will execute in any order as it is not important (first-come, first-served).
+        The inline code will wait for all 3 scripts to execute before it runs.
+    </p>
+    <h2>How to deal with inline scripts</h2>
+    <p>
+        Only.js philosophy is only one: <strong>avoid inline scripts</strong>. If your <code>init.js</code> file size is larger than 128kb when
+        minifed and gizipped then you should use a modular framework such as <strong>require.js</strong> instead.
+    </p>
+    <p>
+        To convert <code>&lt;script src="..."&gt;&lt;/script&gt;</code> and <code>&lt;script&gt;/* inline code */&lt;/script&gt;</code> tags into
+        $O API calls, use these two rules:
+    </p>
+    <ol>
+        <li>For every <code>&lt;script src="..."&gt;&lt;/script&gt;</code> tag you are replacing, you should have a <strong>.js(...)</strong> call.</li>
+        <li>
+            For every <code>&lt;script&gt;/* inline code */&lt;/script&gt;</code> inline script block with code in it, we need a
+            <strong>.wait(function(){ ... })</strong> call to wrap around the code.
+        </li>
+    </ol>
+    <p>
+        Don't forget that the order of execution will determine if <code>.wait()</code> call will be used to ensure execution order.
+        If this still is a little confusing, view <a href="#codeexamples">Only.js examples</a> <b>below</b>.
+    </p>
+    <h2>Special "Feature" Note(s)</h2>
+    <p>
+        Only.js <b>(LABjs)</b> is able to handle non-feature-testable behavior in older legacy browsers through the use of two small but fairly solid
+        browser inference sniffs. This is different from feature-detection (which is always preferable when possible), but with script-loading
+        quirk behavior, there's no way to feature-detect (in those older legacy browsers), so we simply have to fork behavior based on browser
+        family. So, the following two browser inference sniffs are used:
+    </p>
+    <ul>
+        <li>
+            <b>(global.opera &amp;&amp; Object.prototype.toString.call(global.opera) == "[object Opera]"):</b>
+            The Opera inference relies on the fact that Opera declares an "opera" property on the window object, and that it's a special native,
+            whose toString() return value cannot be duplicated by someone just declaring a window.opera property themselves. This gives a reasonably
+            strong inference that we are in fact in the Opera browser.
+        </li>
+        <li>
+            <b>("MozAppearance" in document.documentElement.style):</b>
+            The Mozilla inference relies on "MozAppearance" only appearing in Gecko browsers in the documentElement's style object. This isn't as
+            solid as the Opera inference, but Gecko/FF has had this property for a really long time and there's a good chance they won't remove it,
+            nor would any other browser have any reason to add a property of that name.
+        </li>
+    </ul>
+    <p>
+        Only.js <b>(LABjs)</b> feature-tests for `async=true` (aka "ordered async") on script-inserted script elements. Read more about this
+        feature on the <a href="http://wiki.whatwg.org/wiki/Dynamic_Script_Execution_Order">Dynamic Script Execution Order</a> WHATWG Wiki Page
+        and Henri Sivonen's <a href="http://hsivonen.iki.fi/script-execution/">HTML5 Script Execution Changes</a>.
+    </p>
+    <p>
+        The HTML Spec has <a href="http://www.w3.org/Bugs/Public/show_bug.cgi?id=11295">officially been updated</a> to include the
+        <a href="http://ln.hixie.ch/?start=1296711456&amp;count=1">"async=false" behavior</a>, that Only.js <b>(LABjs)</b> employs a feature-detect for. FF4+, Webkit (March 2011+),
+        IE10p2+, and Chrome 12+ now have this implemented (and Opera is coming soon).
+    </p>
+    <p>
+        Only.js <b>(LABjs)</b> also feature-tests for "real preloading". This type of preloading doesn't rely on the "cache preloading" hacks, but instead directly preloads
+        the script (once) and then allows the execution of that code on-demand without a second (cached) request. This functionality has been present in
+        IE since version 4, is suggested in the HTML spec (not required), and has been proposed to be officially declared a requirement. Even if it's never
+        actually standardized any further, it's the best method available for IE, so it's worth it. Read more about the proposal to make this a requirement:
+        <a href="http://wiki.whatwg.org/wiki/Script_Execution_Control">Script Execution Control</a>.
+    </p>
+    <hr>
+    <h2 id="api">Only.js API</h2>
+    <h3>Methods</h3>
+    <ul>
+        <li><a href="#ready">$O.ready()</a></li>
+        <li><a href="#setdefaults">$O.setDefaults()</a></li>
+        <li><a href="#setoptions">$O.setOptions()</a></li>
+        <li><a href="#test">$O.test()</a></li>
+        <li><a href="#js">$O.js()</a></li>
+        <li><a href="#wait">$O.wait()</a></li>
+        <li><a href="#noconflict">$O.noConflict()</a></li>
+        <li><a href="#end">$O.end()</a></li>
+        <li><a href="#sandbox">$O.sandbox()</a></li>
+    </ul>
+    <br>
+    <hr>
+    <p id="ready">
+        [<i>$O</i>] $O.<b>ready</b>(<i>function</i> <b>inlineScript</b>)
+    </p>
+    <p>
+        This function is used to defer the execution of a function reference (usually an inline anonymous function) until DOMContentLoaded.
+        This method is not chain-able, and thus must only be called stand-alone like this: <b>$O.ready({...});</b>. It is usually used with
+        <code>$O.test()</code> to ensure the test is executed after the DOM has loaded.
+    </p>
+    <p>
+        <span class="text-underline">Parameters</span><br>
+        <b>inlineScript</b> : (required)<br>
+        <span class="text-underline">Returns</span><br>
+        <i>none</i>
+    </p>
+    <hr>
+    <p id="setdefaults">
+        <i>void</i> $O.<b>setDefaults</b>(<i>object</i> <b>optionsObject</b>)
+    </p>
+    <p>
+        Sets one or more options as global defaults to be used by all $O chains on the page. This method is <b>not</b> chain-able, and
+        thus must only be called stand-alone like this: <strong>$O.setDefaults({...});</strong> before any $O chains in <code>init.js</code>.
+    </p>
+    <p id="optionsobject">
+        <span class="text-underline">Parameters</span><br>
+        <b>optionsObject</b> : an object which contains name/value pairs for the options to set:
+    </p>
+    <ul>
+        <li>
+            <b>alwaysPreserveOrder</b>: a boolean (defaults to false) which controls whether an implicit empty
+            <a href="#wait">wait()</a> call is assumed after every script loading, which essentially forces all scripts in the
+            chain to execute serially in order (loading in parallel, by default, is not affected by this setting).
+        </li>
+        <li>
+            <b>useLocalXHR</b>: a boolean (defaults to true) which controls whether Only.js will use an XHR Ajax call to "preload"
+            scripts which are "local" to the current page's domain (note: does *not* take advantage of any cross-domain Ajax techniques).
+            This "preload" is effective and quite performant for local scripts.<br>
+            &nbsp; &nbsp; <b>NOTE:</b> This technique is only attempted to be used if it's set to true <b>and</b> in an older Webkit browser, where neither
+            ordered-async or real-preloading were present, and then only on a local same-domain script. Otherwise, this setting is ignored.
+        </li>
+        <li id="allowduplicates">
+            <b>allowDuplicates</b>: a boolean (defaults to false) which controls whether or not Only.js will inspect its internal
+            script URL cache to prevent a script URI from being (accidentally, most likely) loaded a second time. By default, Only.js will
+            not make any duplicate requests for the same script URL. Duplicates within the same chain will simply be ignored, and duplicates
+            across other chains will cause those duplicate calls in the other chains to patiently wait until the single resource loading finishes.
+            If you turn "allowDuplicates" on, then no such de-duplication will be done, either within the chain or between multiple chains.
+        </li>
+        <li>
+            <b>basePath</b>: a string (defaults to empty "") which specifies a path value to prepend to every script URL. All relative
+            script URL's are already automatically fully qualified to the page's location, so this basePath should really be used to set
+            some other absolute path to override this qualification for otherwise relative "looking" script URL's.
+        </li>
+        <li>
+            <b>cacheBust</b>: a boolean (defaults to false) which adds a random number parameter to every script URL to prevent the URL you requested
+            from being cached. In other words, your requested script will be loaded new each time, since it will have a new random number on the URL
+            each time.
+        </li>
+        <li>
+            <b>debug</b>: a boolean (defaults to false) which controls if the web console will be used to log the various steps of loading/processing
+            logic for $O chains. This option is only effective if using the source file for Only-debug.js, or the Only-debug.min.js file. Otherwise, this setting
+            will be ignored. As such, it's safe to have this option turned on in both development and production, but not serve the debug build of the file
+            to production unless you need to troubleshoot an issue in production.
+        </li>
+        <li>
+            <b>autoPolyfill</b>: a boolean (defaults to false) which controls if the <b>cdn.polyfill.io</b> service will be used to automatically polyfill
+            and fix current user's browser quirks such as: getting the browser to support HTML5 Elements if it doesn't, etc. The polyfill service
+            automatically determines what to polyfill and what not to, without any extra configuration.
+        </li>
+    </ul>
+    <p>
+        <b>NOTE:</b> The <b>autoPolyfill</b> option can only be used in <strong>$O.setDefaults({ ... })</strong>. It has no effect in
+        <a href="#setoptions">$O.setOptions()</a>.
+    </p>
+    <p>
+        <span class="text-underline">Returns</span><br>
+        <i>none</i>
+    </p>
+    <hr>
+    <p id="setoptions">
+        [<i>$O</i>] $O.<b>setOptions</b>(<i>object</i> <b>optionsObject</b>)
+    </p>
+    <p>
+        Sets one or more options only to be in effect for the current $O chain being executed. This method <b>is</b> chainable (in fact,
+        for it to have any effect, it must be part of a chain!), but it <b>must</b> be the first call in the chain (as changing many of
+        the options mid-chain would create race conditions). So, it must be called like this: <b>$O.setOptions({...}).js(...)...</b>;
+    </p>
+    <p>
+        <span class="text-underline">Parameters</span><br>
+        <b>optionsObject</b> : an object which contains name/value pairs for the <a href="#optionsobject">options to set</a><br>
+        <span class="text-underline">Returns</span><br>
+        <i>$O</i> : the chained object reference so subsequent calls to <a href="#test">test()</a>, <a href="#js">js()</a> and <a href="#wait">wait()</a>
+        can be made.
+    </p>
+    <hr>
+    <p id="test">
+        [<i>$O</i>] $O.<b>test</b>(<i>selector</i>)
+    </p>
+    <p>
+        This function is used to test if one or more selectors exists on the current page.
+    </p>
+    <p>
+        <span class="text-underline">Parameters</span><br>
+        <i>varies</i> (a valid selector string or an array of valid selector strings):
+    </p>
+    <ul>
+        <li><i>string</i> : must be a valid selector string that is accepted by <code>document.querySelector()</code></li>
+        <li><i>array</i> : an array of valid selector strings that are accepted by <code>document.querySelector()</code></li>
+    </ul>
+    <p>
+        <span class="text-underline">Returns</span><br>
+        <i>$O</i> : the chained object reference so subsequent calls to <a href="#test">test()</a>, <a href="#js">js()</a> and <a href="#wait">wait()</a>
+        can be made.
+    </p>
+    <hr>
+    <p id="js">
+        [<i>$O</i>] $O.<b>js</b>(<i>varies</i>,...)
+    </p>
+    <p>
+        This method accepts one or more parameters of varying types. Each parameter value is intended to specify a script resource URI
+        to load.
+    </p>
+    <p>
+        <span class="text-underline">Parameters</span><br>
+        <i>varies</i> (can be any number/combination of the following):
+    </p>
+    <ul>
+        <li><i>string</i> : a relative or absolute path URI to a local or remote script to load</li>
+        <li><i>object</i> : an object containing one or more of these properties:
+            <ul>
+                <li><i>string</i> src : (required) a relative or absolute path URI to a local or remote script to load</li>
+                <li><i>string</i> type : (optional) the MIME type attribute (eg, "text/javascript", "text/vbscript", etc)</li>
+                <li><i>string</i> charset : (optional) the charset attribute (eg, "utf-8", etc)</li>
+                <li><i>object</i> attributes : (optional) any additional attributes to insert on script tag (eg, "gumby-init" : "false")</li>
+            </ul>
+        </li>
+        <li><i>array</i> : an array of parameters of any of the allowed types (including array)</li>
+        <li><p id="script-function"><i>function</i> : if a function is found as one of the parameters, that function will be
+            be executed immediately, which must return a value directly. The return value must be one of the other allowable types
+            (<i>string</i>, <i>object</i>, or <i>array</i>). If the function call results in no return value ("undefined") or
+            the value is "falsy" (false, null, etc), it will be interpreted as no script to load.
+        </p><p>
+            This feature allows the construction of "conditional chains", where run-time logic is used to decide ultimately what
+            scripts will be loaded by the $O chain. Eg: load <code>ie-script.js</code> if browser is IE, else load <code>any-script.js</code>
+            for other browsers.
+        </p>
+            <p>
+                See <a href="#codeexamples">Examples below</a> for usage demonstration.
+            </p>
+        </li>
+    </ul>
+    <p>
+        <span class="text-underline">Returns</span><br>
+        <i>$O</i> : the chained object reference so subsequent calls to <a href="#test">test()</a>, <a href="#js">js()</a> and <a href="#wait">wait()</a>
+        can be made.
+    </p>
+    <hr>
+    <p id="wait">
+        [<i>$O</i>] $O.<b>wait</b>(<i>function</i> <b>inlineScript</b>[=<i>null</i>])
+    </p>
+    <p>
+        This function serves two purposes. Firstly, when inserted into a chain, it tells the chain to ensure that all scripts previously
+        listed in the chain should finish executing before allowing the internal 'execution cursor' to proceed to the remaining part of the
+        chain. Essentially, you can specify "blocking" behavior in terms of execution (not loading!) to ensure dependencies execute in
+        the proper order (regardless of how they were loaded).
+    </p>
+    <p>
+        Secondly, you can specify a function reference (usually an inline anonymous function) that will be executed in order, immediately
+        following the chain's previous scripts executing, but before subsequent scripts in the chain are executed. This is synonymous with
+        inline <code>&lt;script&gt;</code> tags before or after <code>&lt;script src="..."&gt;</code> type tags.
+    </p>
+    <p>
+        For instance, it can be used to defer the initialization execution of a script you are downloading, like this:
+        <code>$O.js("script.js").wait(function(){<b>initScript();</b>});</code> where <b>initScript()</b> is a function that is defined in
+        "script.js".
+    </p>
+    <p>
+        <span class="text-underline">Parameters</span><br>
+        <b>inlineScript</b> : (optional, defaults to <i>null</i>)<br>
+        <span class="text-underline">Returns</span><br>
+        <i>$O</i> : the chained object reference so subsequent calls to <a href="#test">test()</a>, <a href="#js">js()</a> and <a href="#wait">wait()</a>
+        can be made.
+    </p>
+    <hr>
+    <p id="noconflict">
+        [<i>$O instance</i>] $O.<b>noConflict</b>(<i>none</i>)
+    </p>
+    <p>
+        noConflict() rolls back the page to the previous version of Only.js (if any) before this copy of Only.js was loaded, and returns the current instance of $O.
+    </p>
+    <p>
+        <span class="text-underline">Parameters</span><br>
+        <i>none</i><br>
+        <span class="text-underline">Returns</span><br>
+        <i>$O instance</i> : the current $O instance (from before the rollback)
+    </p>
+    <hr>
+    <p id="end">
+        [<i>$O instance</i>] $O.<b>end</b>(<i>none</i>)
+    </p>
+    <p>
+        end() creates a new chain-able instance of $O. This allows you to get new chain-able instances of Only.js without breaking a chain. It is
+        different from sandbox() that returns a clean instance <span class="text-muted">(does not handle test() chains properly)</span> and might
+        be problematic on long test() chains. Mostly used with $O.test() without breaking the visible chain.
+    </p>
+    <p>
+        <span class="text-underline">Parameters</span><br>
+        <i>none</i><br>
+        <span class="text-underline">Returns</span><br>
+        <i>$O instance</i> : a new chain-able instance of $O
+    </p>
+    <hr>
+    <p id="sandbox">
+        [<i>$O instance</i>] $O.<b>sandbox</b>(<i>none</i>)
+    </p>
+    <p>
+        sandbox() creates a new clean instance of $O. This allows you to get new instances of Only.js.
+    </p>
+    <p>
+        <span class="text-underline">Parameters</span><br>
+        <i>none</i><br>
+        <span class="text-underline">Returns</span><br>
+        <i>$O instance</i> : a new clean instance of $O
+    </p>
+    <hr>
+    <h2 id="codeexamples">Code Examples</h2>
+
+    <h4>Example 1:</h4>
+    <div class="highlight">
+        <pre><code>$O.js("script1.js")
+    .js("script2.js")
+    .js("script3.js")
+    .wait(function(){ // wait for all scripts to execute first
+        script1Func();
+        script2Func();
+        script3Func();
+    });</code></pre>
+    </div>
+
+    <h4>Example 2:</h4>
+    <div class="highlight">
+        <pre><code>$O.ready(function(){ // execute after DOMContentLoaded
+    $O.js({
+        src: "script1.js",
+        type: "text/javascript",
+        attributes: { "gumby-init" : "false" }
+    })
+    .js("script2.js")
+    .js("script3.js")
+    .wait(function(){ // wait for all scripts to execute first
+        script1Func();
+        script2Func();
+        script3Func();
+    });
+});</code></pre>
+    </div>
+
+    <h4>Example 3:</h4>
+    <div class="highlight">
+        <pre><code>// test if #scriptsBox selector exists
+$O.ready(function(){
+    $O.test('#scriptsBox')
+        .js("script1.js", "script2.js", "script3.js")
+        .wait(function(){ // wait for all scripts to execute first
+            script1Func();
+            script2Func();
+            script3Func();
+        });
+});</code></pre>
+    </div>
+
+    <h4>Example 4:</h4>
+    <div class="highlight">
+        <pre><code>// test for #scriptsBox selector, if it exists then the chain is executed
+$O.ready(function(){
+    $O.test('#scriptsBox')
+        .js(["script1.js", "script2.js"], "script3.js")
+        .wait(function(){ // wait for all scripts to execute first
+            script1Func();
+            script2Func();
+            script3Func();
+        }).end() // implicitly break current test() chain
+        .js("script4.js") // will execute if #scriptsBox selector does not exist
+        .wait(function(){script4Func();});
+});</code></pre>
+    </div>
+
+    <h4>Example 5:</h4>
+    <div class="highlight">
+        <pre><code>$O.ready(function(){
+    $O.test('#scriptsBox, #pluginsBox') // OR-like selector test; execute if any were found
+        .js("script1.js").wait() // empty wait() simply ensures execution order be preserved for this script
+        .js("script2.js") // both script2 and script3 depend on script1 being executed before
+        .js("script3.js").wait() // but are not dependent on each other and can execute in any order
+        .js("script4.js") // depends on script1, script2 and script3 being loaded before
+        .wait(function(){script4Func();});
+});</code></pre>
+    </div>
+
+    <h4>Example 6:</h4>
+    <div class="highlight">
+        <pre><code>$O.ready(function(){
+    $O.test('#scriptsBox').test('#pluginsBox') // AND-like selector test; execute if both were found
+    // also equivalent to: $O.test(['#scriptsBox', '#pluginsBox'])
+        .js("script1.js") // script1, script2, and script3 do not depend on each other,
+        .js("script2.js") // so execute in any order
+        .js("script3.js")
+        .wait(function(){  // can still have executable wait(...) functions if you need to
+            alert("Scripts 1-3 are loaded!");
+        })
+        .js("script4.js") // depends on script1, script2 and script3 being executed before
+        .wait(function(){script4Func();});
+});</code></pre>
+    </div>
+
+    <h4>Example 7:</h4>
+    <div class="highlight">
+        <pre><code>$O.setOptions({alwaysPreserveOrder:true}) // tells this chain to implicitly "wait" on
+    // execution (not loading) between each script
+    .js("script1.js") // script1, script2, script3, and script4 *DO* depend on each
+    .js("script2.js") // other, and will execute serially in order after all 4 have have
+    .js("script3.js") // loaded in parallel
+    .js("script4.js")
+    .wait(function(){script4Func();});</code></pre>
+    </div>
+
+    <h4>Example 8:</h4>
+    <div class="highlight">
+        <pre><code>$O.js(function(){
+        // assuming `_is_IE` defined by host page as true in IE and false in other browsers
+        if (_is_IE) {
+            return "ie.js"; // only if in IE, this script will be loaded
+        }
+        else {
+            return null; // if not in IE, this script call will effectively be ignored
+        }
+    })
+    .js("script1.js")
+    .wait();</code></pre>
+    </div>
+
+    <footer class="site-footer">
+        <span class="site-footer-owner">Project maintained by <a href="https://github.com/Ema4rl">Harrison Emmanuel (Ema4rl)</a>.</span>
+
+        <span class="site-footer-credits">This page was built with: <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a>, <a href="https://ema4rl.github.io/CSS.load">CSS.load</a>, and <a href="https://ema4rl.github.io/Only.js">Only.js</a>.</span>
+    </footer>
+</section>
+</body>
+</html>

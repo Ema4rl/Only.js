@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Only.js tests (Only.js with auto polyfill loading)</title>
+    <script src="../src/Only.js"></script>
+
+    <!-- testing automatic polyfill loading -->
+
+    <script>
+
+        var timeDiff = function(){
+            var d, time;
+            return {
+                setStartTime:function (){
+                    d = new Date();
+                    time  = d.getTime();
+                },
+                getDiff:function (){
+                    d = new Date();
+                    return (d.getTime()-time);
+                }
+            };
+        }();
+
+        function done() {
+            var log_value_text = "Loading/Execution Time: "+timeDiff.getDiff()+"\n";
+            (function fn(){
+                var load_log = document.getElementById("load_log");
+                if (load_log !== null) load_log.value += log_value_text;
+                else setTimeout(fn,10);
+            })();
+        }
+
+        timeDiff.setStartTime();
+
+        $O.setDefaults({
+            autoPolyfill: true
+        });
+
+        // test with separate object chains
+        $O
+            // test with in-existent selector first
+                .test('.form')
+                .test('textarea')
+                .js("in-existent-1.js") // should not load, '.form' does not exist
+                .js("in-existent-2.js") // should not load, '.form' does not exist
+                .js("in-existent-3.js") // should not load, '.form' does not exist
+                .end()
+                .js("test-8-chaining-with-end.js") // should load,  does not depend on '.form' but in on same chain
+                .end()
+
+            // test with in-existent selector last
+                .test('form')
+                .test('.textarea')
+                .js("in-existent-1.js") // should not load, '.textarea' does not exist
+                .js("in-existent-2.js") // should not load, '.textarea' does not exist
+                .js("in-existent-3.js") // should not load, '.textarea' does not exist
+                .end()
+
+            // test with 'and'-like selector dependency
+                .test('form')
+                .test('textarea')
+                .js("test-2-form-plugin.js") // should load as element does exist - depends on form & textarea (waits for dom ready)
+                .js("test-3-form-plugin.js") // should load as element does exist - depends on form & textarea (waits for dom ready)
+                .end()
+
+            // test with 'or'-like selector dependency
+                .test('form, textarea')
+                .js("test-3-dependency-chaining.js") // should load since it does not depend on an element (should load before test-2-form-plugin.js)
+                .wait(done);
+    </script>
+</head>
+
+<body>
+
+<h1>Only.js tests (Only.js with auto polyfill loading)</h1>
+
+<img src="img1.jpg" width="100" hspace="5" alt="image 1" title="size: 379kb" />
+<img src="img2.jpg" width="100" hspace="5" alt="image 2" title="size: 20kb" />
+
+<br />
+<form name="log_form">
+    <label>
+        <textarea id="load_log" name="load_log" cols="80" rows="10"></textarea>
+    </label>
+</form>
+
+</body>
+</html>

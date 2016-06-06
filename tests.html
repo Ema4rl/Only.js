@@ -1,0 +1,100 @@
+<!doctype html>
+<html class="no-js" lang="en-us">
+<head>
+    <meta charset="UTF-8">
+    <title>Tests | Only.js Selector-based Loader by Harrison Emmanuel (Ema4rl)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="assets/css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet.css">
+    <link rel="preload" as="style" href="assets/css/github.css">
+    <script src="assets/js/Only.min.js" data-only="assets/js/init.js" async></script>
+</head>
+<body>
+<section class="page-header">
+    <h1 class="project-name"><span class="only">Only</span><span class="js">.js</span> Selector-based Loader</h1>
+    <h2 class="project-tagline">Automatically load and execute selector-based dependencies</h2>
+    <ul class="page-nav">
+        <li><a href="index.html" class="btn">Home</a></li>
+        <li><a href="get-started.html" class="btn">Get Started</a></li>
+        <li><a href="documentation.html" class="btn">Documentation</a></li>
+        <li><a href="download.html" class="btn">Download</a></li>
+        <li><a href="tests.html" class="btn active">Test it!</a></li>
+    </ul>
+    <img class="page-header-img" src="assets/img/onlyjs-icon-md.png" width="200" height="200" alt="Only.js">
+</section>
+
+<section class="main-content">
+    <h1>Only.js Tests</h1>
+    <hr>
+
+    <h2>Browser support</h2>
+    <p>
+        Since Only.js inherits from LABjs, we also inherit LABjs browser support, though you're advised to use our test suite and help fill in the
+        gaps with a pull request on <a href="https://www.github.com/Ema4rl/Only.js" target="only_tab">GitHub</a>.
+    </p>
+    <p>
+        Browsers that were tested and passed the <a href="#test-suite">test suite</a> are:
+    </p>
+    <ul>
+        <li><b>Windows:</b> IE 6+, FF 1.5+, Chromium browsers <span class="text-muted">(Chrome, Torch, Maxthon, etc)</span>, Opera 9.6+,
+            Safari 4+, Netscape 7.2+, Mozilla 1.7</li>
+        <li><b>Mac (OSX):</b> Safari 3.2+, Netscape 9, FF 1.5+, Opera 9.6+, Mozilla 1.7, Camino 2</li>
+        <li><b>Linux:</b> FF 1.5+, Opera 9.5+, Netscape 9</li>
+    </ul>
+
+    <h2>Known unsupported</h2>
+    <hr>
+    <p>
+        Safari 2, Opera 8, Konquerer (3.4, 4.1), FF 4b7 (only this exact release. &lt;= b6 and b8+ are ok), Blackberry 4
+    </p>
+
+    <h2 id="test-suite">Test Suite</h2>
+    <hr>
+    <p>Below are the Only.js-specific tests:</p>
+    <ol>
+        <li>
+            <a href="tests/test-1-data-attribute.html">Data attribute test</a>.
+        </li>
+        <li>
+            <a href="tests/test-2-dependency-loading.html">Dependency loading</a>.
+        </li>
+        <li>
+            <a href="tests/test-3-dependency-chaining.html">Dependency chaining</a>.
+        </li>
+        <li>
+            <a href="tests/test-4-dependency-via-data-attribute.html">Depenency via data attribute</a>.
+        </li>
+        <li>
+            <a href="tests/test-5-custom-attributes.html">Custom script attributes</a>.
+        </li>
+        <li>
+            <a href="tests/test-6-no-js-to-js.html">HTMLElement no-js to js class re-write</a>.
+        </li>
+        <li>
+            <a href="tests/test-7-multiple-dependency-chaining-a.html">Multiple dependency chaining (a)</a>.
+        </li>
+        <li>
+            <a href="tests/test-7-multiple-dependency-chaining-b.html">Multiple dependency chaining (b)</a>.
+        </li>
+        <li>
+            <a href="tests/test-8-multiple-dependency-chaining-with-end-a.html">Multiple dependency chaining with (a) .end()</a>.
+        </li>
+        <li>
+            <a href="tests/test-8-multiple-dependency-chaining-with-sandbox-b.html">Multiple dependency chaining with (b) .sandbox()</a>.
+        </li>
+        <li>
+            <a href="tests/test-9-auto-polyfill-loading.html">Automatic polyfill loading</a>.
+        </li>
+        <li>Cross-browser DOMContentLoaded test</li>
+    </ol>
+
+    <footer class="site-footer">
+        <span class="site-footer-owner">Project maintained by <a href="https://github.com/Ema4rl">Harrison Emmanuel (Ema4rl)</a>.</span>
+
+        <span class="site-footer-credits">This page was built with: <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a>, <a href="https://ema4rl.github.io/CSS.load">CSS.load</a>, and <a href="https://ema4rl.github.io/Only.js">Only.js</a>.</span>
+    </footer>
+</section>
+</body>
+</html>

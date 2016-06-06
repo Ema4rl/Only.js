@@ -1,0 +1,118 @@
+<!doctype html>
+<html class="no-js" lang="en-us">
+<head>
+    <meta charset="UTF-8">
+    <title>Home | Only.js Selector-based Loader by Harrison Emmanuel (Ema4rl)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="assets/css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet.css">
+    <link rel="preload" as="style" href="assets/css/github.css">
+    <script src="assets/js/Only.min.js" data-only="assets/js/init.js" async></script>
+</head>
+<body>
+<section class="page-header">
+    <h1 class="project-name"><span class="only">Only</span><span class="js">.js</span> Selector-based Loader</h1>
+    <h2 class="project-tagline">Automatically load and execute selector-based dependencies</h2>
+    <ul class="page-nav">
+        <li><a href="index.html" class="btn active">Home</a></li>
+        <li><a href="get-started.html" class="btn">Get Started</a></li>
+        <li><a href="documentation.html" class="btn">Documentation</a></li>
+        <li><a href="download.html" class="btn">Download</a></li>
+        <li><a href="tests.html" class="btn">Test it!</a></li>
+    </ul>
+    <img class="page-header-img" src="assets/img/onlyjs-icon-md.png" width="200" height="200" alt="Only.js">
+</section>
+
+<section class="main-content">
+    <h1>The selector-based script loader</h1>
+    <hr>
+
+    <h2>I'm on steroids <small class="text-muted"><strong>(extends LABjs)</strong></small></h2>
+
+    <p>
+        Only.js is a dynamic selector-based script loader that not only replaces the use of multiple <code>&lt;script&gt;</code> tags and initialization
+        code but also with a fast, parallel, speed-optimized API. Some script loaders tend to do a lot of things; from loading scripts, to loading css,
+        to feature detection, to loading iframes, images, maybe even solar systems &mdash; eventually.
+    </p>
+
+    <p>
+        The major characteristic of Only.js is not the ability to load <em>all</em> Javascript files in parallel with cross-browser execution order
+        but the ability to dynamically determine and load Javascript needed by the current page without blocking other assets/resources.
+    </p>
+    <p>
+        <b>NOTE:</b> Only.js is ~2.5kb (minified + gzipped).
+    </p>
+
+    <p>From <a href="http://labjs.com" target="only_tab">LABjs Docs</a>:</p>
+    <blockquote>
+        <p>LABjs is a dynamic script loader intended to replace the use of the ugly, non-performant <code>&lt;script&gt;</code> tag with a flexible and performance-optimized alternative API.</p>
+
+        <p>The defining characteristic of LABjs is the ability to load <em>all</em> JavaScript files in parallel, as fast as the browser will allow, but giving you the option to ensure proper execution order if you have dependencies between files.</p>
+    </blockquote>
+
+    <a class="btn btn-secondary" href="http://labjs.com" target="only_tab">More on LABjs.com &raquo;</a>
+
+    <h2>Features</h2>
+    <p>
+        When you need a sleek, simple, solid, and lightweight cross-browser compatible loader, don't bang your head. Only.js is here to help you out !
+    </p>
+    <ul>
+        <li>Load scripts asynchronously and in parallel, but execute them in order;</li>
+        <li>
+            Conditional script loading if a selector is available;
+            <ul>
+                <li>Test multiple selectors with AND -like condition [eg: <code>$O.test(['this', 'that']).js().wait()</code>]</li>
+                <li>Test multiple selectors with OR -like condition [eg: <code>$O.test('this, that').js().wait()</code>]</li>
+            </ul>
+        </li>
+        <li>Manage script dependencies &mdash; execute callbacks once they are loaded;</li>
+        <li>A mini modernizr &mdash; replaces <b>.no-js</b> to <b>.js</b> on the HTMLElement <small class="text-muted">for CSS manipulations</small>;</li>
+        <li>Opt-in to fix quirks in all browsers with automatic polyfill insert via <b>cdn.polyfill.io</b>;</li>
+        <li>Get old browsers to support HTML5 elements;</li>
+        <li>Ability to use custom javascript attributes for loaded scripts;</li>
+        <li>Uses an entry point initialization script via <strong>data-only</strong> for simplicity;</li>
+        <li>The only script you'll ever need in your <strong>&lt;html&gt;</strong> <i class="text-muted">(view page source)</i>.</li>
+    </ul>
+
+    <h2>How to use</h2>
+    <hr>
+    <p>Simply insert Only.js before the <code>&lt;/head&gt;</code> <small class="text-muted">(before <code>&lt;body&gt;</code>)</small>:</p>
+
+    <div class="highlight">
+        <pre><code>&lt;script src="Only.min.js" data-only="init.js" asnyc&gt;&lt;/script&gt;</code></pre>
+    </div>
+
+    <p>
+        The <code>asnyc</code> attribute will help to save on the blocking load of <strong>Only.min.js</strong> <span class="text-muted">(~2.5kb gizipped)</span> and also
+        ensure that Only.js is executed as soon as possible without blocking the downloads of other assets/resources.
+    </p>
+
+    <a href="get-started.html" class="btn btn-warning">Get started now! &raquo;</a>
+
+    <h2>Build Process</h2>
+
+    <p>Our "official" build process uses <strong>gulp</strong>.</p>
+
+    <a href="download.html#custom-builds" class="btn btn-success">Custom builds &raquo;</a>
+
+    <h2>Protocol-relative URLs</h2>
+
+    <p>Browsers have long supported "protocol-relative URLs", which basically means leaving off the "http:" or "https:" portion of a URL (leaving just the "//domain.tld/path/..." part), which causes that URL to be assumed to be the same protocol as the parent page. The benefit is that if you have a page that can be viewed in either HTTP or HTTPS, and your resources can (and need to be) served through either HTTP or HTTPS, respectively, you can simply list your URLs as protocol-relative and the browser will auto-select based on which protocol the page is viewed in.</p>
+
+    <p>Only.js now supports specifying such URLs to any script URL setting. <b>NOTE:</b> This is the recommended way to specify URLs for script resources if: a) the page you're serving can be viewed in both HTTP and HTTPS; and b) the script resource you're linking to can be accessed using the exact same domain/path with exception to the protocol. </p>
+
+    <p>
+        A common example of such a resource is the CDN locations on the Google Ajax API, where popular frameworks like jQuery and Dojo are hosted.
+        If you are linking to such CDN resources, you are strongly encouraged to change to using protocol-relative URLs, like
+        <b>"//ajax.googleapis.com/..."</b> instead of <b>"http://ajax.googleapis.com/..."</b> or <b>"https://ajax.googleapis.com/..."</b>.</p>
+
+    <footer class="site-footer">
+        <span class="site-footer-owner">Project maintained by <a href="https://github.com/Ema4rl">Harrison Emmanuel (Ema4rl)</a>.</span>
+
+        <span class="site-footer-credits">This page was built with: <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a>, <a href="https://ema4rl.github.io/CSS.load">CSS.load</a>, and <a href="https://ema4rl.github.io/Only.js">Only.js</a>.</span>
+    </footer>
+</section>
+</body>
+</html>

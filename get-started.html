@@ -1,0 +1,250 @@
+<!doctype html>
+<html class="no-js" lang="en-us">
+<head>
+    <meta charset="UTF-8">
+    <title>Get Started | Only.js Selector-based Loader by Harrison Emmanuel (Ema4rl)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="assets/css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/stylesheet.css">
+    <link rel="preload" as="style" href="assets/css/github.css">
+    <script src="assets/js/Only.min.js" data-only="assets/js/init.js" async></script>
+</head>
+<body>
+<section class="page-header">
+    <h1 class="project-name"><span class="only">Only</span><span class="js">.js</span> Selector-based Loader</h1>
+    <h2 class="project-tagline">Automatically load and execute selector-based dependencies</h2>
+    <ul class="page-nav">
+        <li><a href="index.html" class="btn">Home</a></li>
+        <li><a href="get-started.html" class="btn active">Get Started</a></li>
+        <li><a href="documentation.html" class="btn">Documentation</a></li>
+        <li><a href="download.html" class="btn">Download</a></li>
+        <li><a href="tests.html" class="btn">Test it!</a></li>
+    </ul>
+    <img class="page-header-img" src="assets/img/onlyjs-icon-md.png" width="200" height="200" alt="Only.js">
+</section>
+
+<section class="main-content">
+    <h1>Get Started</h1>
+    <hr>
+    <h2>Description</h2>
+    <p>
+        This project is a simple little tool for being able to dynamically load javascript files. It's like many script loaders where the goal
+        is to improve the speed of page load by allowing scripts to load in parallel and preserve execution order for dependencies. The thing it
+        does differently than most others is it allows you load dependencies based on what selectors exist on the page.
+        By default:
+    </p>
+    <ul>
+        <li>Two or more selectors can be tested with OR-like / AND-like conditions.</li>
+        <li>All scripts will load in parallel, but execution order will be deferred until the proper time, if required.</li>
+    </ul>
+    <p>
+        What most loaders fail to do is:
+    </p>
+    <ul>
+        <li>Let you define dependencies simply based on loading order.</li>
+        <li>Let you dynamically determine what to load on a per-page basis.</li>
+    </ul>
+
+    <h2>Why use Only.js</h2>
+    <hr>
+    <p>
+        Normally, I'd prefer call scripts: <b>plugins</b>, mostly because they are used to enhance the UI. I'd also prefer not to write all plugin script
+        tags in the HTML <span class="text-muted">(Eg: Google analytics code)</span> cause I believe they depend on something the user needs to
+        use on the webpage (Eg: a time picker plugin). Watch the following closely:
+    </p>
+
+    <p>Using the default "<code>&lt;script&gt;</code> tag structure" we were taught:</p>
+
+    <div class="highlight"><pre><code>&lt;!-- why must these scripts download and execute serially? --&gt;
+&lt;script src="/assets/plugins/jquery.min.js"&gt;&lt;/script&gt;
+&lt;script src="/assets/plugins/morris/morris.min.js"&gt;&lt;/script&gt;
+&lt;script src="/assets/plugins/jquery.sparkline.min.js"&gt;&lt;/script&gt;
+&lt;script src="/assets/js/init.js"&gt;&lt;/script&gt;
+&lt;!-- Oh, this inline script cannot be cached; one less HTTP request (which is better?) --&gt;
+&lt;script&gt;
+    jQuery(document).ready(function() {
+        init();
+    });
+
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-15567888-7', { 'name': 'only', 'cookieDomain': 'none' });
+&lt;/script&gt;</code></pre></div>
+
+    <p>With LABjs <span class="text-muted">(or similar script loaders)</span>:</p>
+
+    <div class="highlight"><pre><code>&lt;script src="LAB.min.js"&gt;&lt;/script&gt;
+&lt;!-- Another mightier inline script which cannot be cached; also clutters the DOM --&gt;
+&lt;script&gt;
+    $LAB.script("/assets/plugins/jquery.min.js").wait()
+        // but morris and sparkline might not always be needed together
+        // (need to think of something... maybe server-side exclusion?)
+        .script("/assets/plugins/morris/morris.min.js")
+        .script("/assets/plugins/jquery.sparkline.min.js")
+        .script("/assets/js/init.js").wait(function(){
+            // must I use jQuery ~90kb if I just need cross-browser DOMContentLoaded detection?
+            jQuery(document).ready(function() {
+                init();
+            });
+        });
+
+    // I only need analytics for site visitors not logged in users (need to think of something...)
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-15567888-7', { 'name': 'only', 'cookieDomain': 'none' });
+&lt;/script&gt;</code></pre></div>
+
+    <p>With Only.js <span class="text-muted">(a selector-based loader)</span>:</p>
+
+    <div class="highlight">
+        <pre><code>&lt;script src="Only.min.js" data-only="init.js" asnyc&gt;&lt;/script&gt; &lt;!-- what can I say? --&gt;</code></pre>
+    </div>
+
+    <p>In <code>init.js</code>:</p>
+
+    <div class="highlight">
+        <pre><code>$O.ready(function(){
+    // will execute if <code>'#morris'</code> is found
+    $O.test('#morris').js("/assets/plugins/morris/morris.min.js")
+        .wait(function(){
+            Morris.Area({element: '#morris'});
+        });
+
+    // will execute if <code>'#sparkline'</code> is found
+    $O.test('#sparkline').js("/assets/plugins/jquery.min.js").wait()
+        .js("/assets/plugins/jquery.sparkline.min.js").wait(function(){
+            $('#sparkline').sparkline(); // no need for jQuery(document).ready() !!!
+        });
+
+    // I only need analytics for site visitors not logged in users
+    $O.test('body.not-logged').wait(function(){
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-15567888-7', { 'name': 'only', 'cookieDomain': 'none' });
+    });
+});</code></pre>
+    </div>
+
+    <p>
+        All these features and more... for just ~2.5kb (minified and gizipped)!. <span class="text-muted">Why haven't I been using this?</span>
+    </p>
+
+    <h2>Why was Only.js built on LABjs</h2>
+    <hr>
+    <p>
+        I use script loaders <span class="text-muted">(LABjs only)</span> for high performance websites built by myself and in <a href="https://www.ionstech.com" target="only_tab">my company</a>.
+        There are various existing script loaders but LABjs excels them all both in speed, and stable parallel resource
+        <span class="text-muted">(scripts, stylesheets, and images)</span> loading. I stress-tested 5 script loaders &mdash;
+        LABjs <span class="text-success">passed</span> all.
+    </p>
+
+    <p>From <a href="http://labjs.com/description.php" target="only_tab">LABjs Docs</a>:</p>
+    <blockquote>
+        <p>
+            LABjs lets you load pretty much any script file, whether you control it or not, with no intrusion or convention for dependencies,
+            other than the order and blocking that you define. It keeps track of what you've asked for and what has downloaded, and lets you only
+            define a handler once for a group of scripts that will execute together in parallel. The API style (with chaining) makes is very easy
+            to convert a set of script tags in your page into code to load them, without having to worry that race conditions will cause issues for
+            scripts loading in the wrong order if there are explicit dependencies involved.
+        </p>
+    </blockquote>
+
+    <h2>When to use Only.js</h2>
+    <hr>
+    <p>
+        If you always have two or more dependencies per selector; eg: <b>DatePair.js</b> and <b>jQuery.datepair.js</b> are
+        always needed to initialize a datepair in <code>.datepair</code> &mdash; combine and minify them. This will reduce the number of HTTP requests
+        and generally create a better loading experience for the website users as it will make your page load faster and more reliably.
+    </p>
+
+    <h2>What if I need to load CSS</h2>
+    <hr>
+    <p>
+        The aim of this project is to simplify and speed up javascript loading. However if you need to also load stylesheets
+        <span class="text-muted">(like I usually do)</span> for related javascript functionality/plugins, then there's a sister project dedicated to
+        asynchronous stylesheet loading ie, <a href="http://ema4rl.github.io/CSS.load">CSS.load</a>.
+    </p>
+    <p>
+        You can include <a href="http://ema4rl.github.io/CSS.load">CSS.load</a> and use it like:
+    </p>
+
+    <div class="highlight">
+        <pre><code>$O.js("/assets/js/CSS.load.min.js"); // start loading CSS.load right away!
+$O.ready(function(){
+    // will execute if <code>'#sparkline'</code> is found
+    $O.test('#sparkline')
+        .js("/assets/plugins/jquery.min.js", "/assets/js/CSS.load.min.js") // depend on CSS.load
+        // (will wait for first call to CSS.load.min.js to download and execute if allowDuplicates is false)
+        .wait(function(){
+            // $O.test() is successful
+            // download sparkline stylesheet asynchronously ASAP
+            $CSS().load("/assets/plugins/jquery.sparkline.min.css");
+            // the stylesheet will arrive faster than in the next wait()
+        })
+        .js("/assets/plugins/jquery.sparkline.min.js").wait(function(){
+            $('#sparkline').sparkline(); // no need for jQuery(document).ready() !!!
+        });
+});</code></pre>
+    </div>
+    <p>
+        Or simply:
+    </p>
+
+    <div class="highlight">
+        <pre><code>$O.ready(function(){
+    // will execute if <code>'#sparkline'</code> is found
+    $O.test('#sparkline')
+        .js("/assets/plugins/jquery.min.js", "/assets/js/CSS.load.min.js").wait()
+        .js("/assets/plugins/jquery.sparkline.min.js", function(){
+            $CSS().load("/assets/plugins/jquery.sparkline.min.css"); // ensure you return nothing (read the docs! :)
+        }).wait(function(){
+            $('#sparkline').sparkline(); // no need for jQuery(document).ready() !!!
+        });
+});</code></pre>
+    </div>
+
+    <h2>When not to use Only.js</h2>
+    <hr>
+    <p>
+        Only.js can and should be used on virtually <b>any</b> site but it shouldn't be used for loading a couple of special file types
+        Eg: <code>&lt;script type="text/html"&gt;&lt;script&gt;</code> (you could test them with our custom attributes though if they'll work for you).
+    </p>
+    <h3>Scripts using document.write()</h3>
+    <p>
+        Don't use Only.js with scripts that use document.write(). document.write() is natively synchronous but there is a replacement that operates
+        the same way but is async safe, called "<a href="DomWrite_URL">DomWrite</a>". DomWrite, used in conjunction with Only.js,
+        will allow you to safely load scripts with document.write() in them via Only.js.
+    </p>
+    <h3>Scripts with bad DOM-ready detection</h3>
+    <p>
+        Some scripts that do DOM-ready detection are flawed in one specific case: when it's loaded in a page <b>AFTER</b> the
+        DOM-ready has already happened but not able to detect that this is the case, in some browsers, and so wait "forever" thinking
+        they are still waiting for DOM-ready to occur. This means that any code which is queued up waiting for DOM-ready to occur never
+        gets executed. Example of such scripts is <a href="http://dev.jquery.com/ticket/4889" target="only_tab">jquery 1.3.2 and below</a>.
+        Such scripts should <b>not</b> be loaded with Only.js because of the race condition between script loading and the actual DOM-ready event.
+    </p>
+    <p>
+        If you detect such a script and you'll need to use it without modifying it's source, simply load <b>ONLY</b> the script file manually,
+        using a regular script tag <span class="text-muted">(best before including Only.js)</span>. This will <b>guarantee</b>
+        that its internal DOM-ready detection will occur correctly.
+    </p>
+
+    <footer class="site-footer">
+        <span class="site-footer-owner">Project maintained by <a href="https://github.com/Ema4rl">Harrison Emmanuel (Ema4rl)</a>.</span>
+
+        <span class="site-footer-credits">This page was built with: <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a>, <a href="https://ema4rl.github.io/CSS.load">CSS.load</a>, and <a href="https://ema4rl.github.io/Only.js">Only.js</a>.</span>
+    </footer>
+</section>
+</body>
+</html>
