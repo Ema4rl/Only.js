@@ -1,0 +1,43 @@
+{
+  "name": "only.js",
+  "version": "1.0.0",
+  "description": "Automatically load and execute selector-based dependencies",
+  "main": "gulpfile.js",
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ema4rl/Only.js.git"
+  },
+  "keywords": [
+    "asset",
+    "loader",
+    "dependency",
+    "selector-based",
+    "parallel",
+    "js",
+    "anynchronous",
+    "dynamic",
+    "script",
+    "Only",
+    "javascript"
+  ],
+  "author": "Harrison Emmanuel (Ema4rl)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ema4rl/Only.js/issues"
+  },
+  "homepage": "https://github.com/ema4rl/Only.js#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-delete-lines": "0.0.7",
+    "gulp-jshint": "^2.0.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^1.5.3",
+    "gzip-size": "^3.0.0",
+    "jshint": "^2.9.2",
+    "vinyl-map": "^1.0.1"
+  }
+}
