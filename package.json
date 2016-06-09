@@ -16,19 +16,22 @@
     "dependency",
     "selector-based",
     "parallel",
-    "js",
     "anynchronous",
     "dynamic",
     "script",
     "Only",
     "javascript"
   ],
-  "author": "Harrison Emmanuel (Ema4rl)",
+  "author": {
+    "name": "Harrison Emmanuel (Ema4rl)",
+    "email": "ema4rl@gmail.com",
+    "url": "https://www.eharry.me"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/ema4rl/Only.js/issues"
   },
-  "homepage": "https://github.com/ema4rl/Only.js#readme",
+  "homepage": "https://ema4rl.github.io/Only.js/",
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.0",
