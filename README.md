@@ -10,7 +10,7 @@ to dynamically determine and load Javascript needed by the current page without 
 
 ## Documentation
 
-[Online Docs & Demo](http://ema4rl.github.io/Only.js)
+[Online Docs & Demo](https://git.io/viTUd)
 
 ## Contributions and bug fixes
 
